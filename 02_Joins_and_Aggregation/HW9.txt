@@ -1,0 +1,78 @@
+/* Marcelo Batista, HW9 */
+
+/* Query 5.3.4 */
+SELECT IngID, IngName
+FROM Ingredient
+WHERE IngName LIKE '%berry'
+ORDER BY IngID;
+
+/* Query 5.3.5 */
+SELECT EmpID, COUNT(*) AS NumberOfBatchesManaged
+FROM Batch
+GROUP BY EmpID
+ORDER BY EmpID;
+
+/* Query 5.3.7 */
+SELECT i.DeliveryID, ing.IngName, sup.SupName, i.DQuantity
+FROM Includes i
+JOIN Ingredient ing ON ing.IngID = i.IngID
+JOIN Delivery d ON d.DeliveryID = i.DeliveryID
+JOIN Supplier sup ON sup.SupID = d.SupID
+WHERE ing.IngName LIKE '%berry'
+ORDER BY i.DeliveryID, ing.IngName;
+
+/* Query 5.3.8 */
+SELECT b.BatchID, b.BatchDate, COUNT(u.IngID) AS NumberOfIngredients
+FROM Batch b
+LEFT JOIN Uses u ON u.BatchID = b.BatchID
+GROUP BY b.BatchID, b.BatchDate
+ORDER BY b.BatchID;
+
+/* Query 5.3.9 */
+SELECT b.BatchID, b.BatchDate, COUNT(u.IngID) AS NumberOfIngredients
+FROM Batch b
+JOIN Uses u ON u.BatchID = b.BatchID
+GROUP BY b.BatchID, b.BatchDate
+HAVING COUNT(u.IngID) > 1
+ORDER BY b.BatchID;
+
+/* Query 5.3.10 */
+SELECT BatchID, BatchDate, NoOfUnits
+FROM Batch
+WHERE NoOfUnits = (
+    SELECT MAX(NoOfUnits)
+    FROM Batch
+);
+
+/* Query 5.3.11 */
+SELECT s.SupName
+FROM Supplier s
+JOIN Supplier parent ON s.ParentCoSupID = parent.SupID
+WHERE parent.SupType = 'Milk Farm'
+ORDER BY s.SupName;
+
+/* Query 5.3.14 */
+SELECT p.ProductID, p.ProductName, b.BatchID, b.BatchDate, b.NoOfUnits
+FROM Product p
+JOIN Batch b ON b.ProductID = p.ProductID
+ORDER BY p.ProductID, b.BatchID;
+
+/* Query 5.3.15 */
+SELECT p.ProductID, p.ProductName, b.BatchID, b.BatchDate, b.NoOfUnits
+FROM Product p
+LEFT JOIN Batch b ON b.ProductID = p.ProductID
+ORDER BY p.ProductID, b.BatchID;
+
+/* Query 5.3.17 */
+SELECT IngID, IngName
+FROM Ingredient
+WHERE IngID NOT IN (SELECT IngID FROM Includes)
+ORDER BY IngID;
+
+/* Query 5.3.18 (Extra Credit) */
+SELECT p.ProductID, p.ProductName,
+       COUNT(b.BatchID) AS NumberOfBatches
+FROM Product p
+LEFT JOIN Batch b ON b.ProductID = p.ProductID
+GROUP BY p.ProductID, p.ProductName
+ORDER BY p.ProductID;
